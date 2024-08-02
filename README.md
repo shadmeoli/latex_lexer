@@ -5,19 +5,14 @@ This project is a TypeScript-based lexer that converts Markdown input into LaTeX
 To install dependencies:
 
 
-
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
+
 
 ## Installation
-
-
-
 To get started, clone the repository and install the necessary dependencies:
 
 ```bash
