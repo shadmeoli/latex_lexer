@@ -8,4 +8,18 @@ interface Token {
   value: string;
 }
 
-export type { Token };
+interface ASTNode {
+  type: string;
+  content?: string;
+  children?: ASTNode[];
+}
+
+interface Content {
+  [key: string]: string;
+}
+
+interface ParseNode {
+  content: Content | string;
+  type: string;
+}
+export type { Token, ASTNode, ParseNode };
