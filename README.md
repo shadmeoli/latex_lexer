@@ -1,5 +1,5 @@
 # latex_lexer
-# Markdown to LaTeX Converter
+## Markdown to LaTeX Converter
 
 This project is a TypeScript-based lexer that converts Markdown input into LaTeX output. The lexer tokenizes the Markdown text, parses it into an Abstract Syntax Tree (AST), and then generates the corresponding LaTeX code.
 To install dependencies:
