@@ -2,6 +2,10 @@
   "name": "latex_lexer",
   "module": "index.ts",
   "type": "module",
+  "script": {
+    "test": "",
+    "build": ""
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
