@@ -1,4 +1,9 @@
-import type { Token, ASTNode, ParseNode } from "./interfaces";
+import type {
+  Token,
+  ASTNode,
+  ASTNodeWithLinkContent,
+  ASTNodeWithImageContent,
+} from "./interfaces";
 import { TokenType } from "./tokens";
 
 export class Parser {
@@ -38,11 +43,16 @@ export class Parser {
         return this.parseInlineMath();
       case TokenType.BLOCK_MATH:
         return this.parseBlockMath();
-      // todo: allow returns of parse nodes
-      // case TokenType.LINK:
-      //   return this.parseLink();
-      // case TokenType.IMAGE:
-      //   return this.parseImage();
+      case TokenType.LINK:
+        return this.parseLink();
+      case TokenType.IMAGE:
+        return this.parseImage();
+      case TokenType.LINE_BREAK:
+        return this.parseLineBreak(); // Ensure you have this method implemented
+      case TokenType.LIST_ITEM:
+        return this.parseListItem(); // Handle LIST_ITEM token type
+      case TokenType.TODO_ITEM:
+        return this.parseTodoItem(); // Handle TODO_ITEM token type
       default:
         throw new Error(`Unknown token type: ${token.type}`);
     }
@@ -78,25 +88,58 @@ export class Parser {
   private parseUnorderedList(): ASTNode {
     const token = this.tokens[this.currentIndex];
     this.currentIndex++;
+
+    const children: ASTNode[] = [];
+
+    if (token.type === TokenType.TODO_ITEM) {
+      children.push(this.parseTodoItem());
+    }
+
+    children.push(...this.parseListItems());
     return {
       type: "UnorderedList",
-      children: this.parseListItems(),
+      children: children,
     };
   }
 
   private parseListItems(): ASTNode[] {
     const items: ASTNode[] = [];
+
     while (
       this.currentIndex < this.tokens.length &&
-      this.tokens[this.currentIndex].type === TokenType.LIST_ITEM
+      (this.tokens[this.currentIndex].type === TokenType.LIST_ITEM ||
+        this.tokens[this.currentIndex].type === TokenType.TODO_ITEM)
     ) {
-      items.push({
-        type: "ListItem",
-        content: this.tokens[this.currentIndex].value,
-      });
+      if (this.tokens[this.currentIndex].type === TokenType.TODO_ITEM) {
+        items.push(this.parseTodoItem());
+      } else {
+        items.push({
+          type: "ListItem",
+          content: this.tokens[this.currentIndex].value,
+        });
+      }
       this.currentIndex++;
     }
+
     return items;
+  }
+
+  private parseListItem(): ASTNode {
+    const token = this.tokens[this.currentIndex];
+    this.currentIndex++;
+    return {
+      type: "ListItem",
+      content: token.value,
+    };
+  }
+
+  private parseTodoItem(): ASTNode {
+    const token = this.tokens[this.currentIndex];
+    this.currentIndex++;
+    return {
+      type: "TodoItem",
+      content: token.value,
+    };
   }
 
   private parseBlockquote(): ASTNode {
@@ -135,7 +178,7 @@ export class Parser {
     };
   }
 
-  private parseLink(): ASTNode | ParseNode {
+  private parseLink(): ASTNodeWithLinkContent {
     const token = this.tokens[this.currentIndex];
     this.currentIndex++;
     const match = token.value.match(/\[([^\]]+)\]\(([^)]+)\)/);
@@ -148,7 +191,7 @@ export class Parser {
     };
   }
 
-  private parseImage(): ASTNode | ParseNode {
+  private parseImage(): ASTNodeWithImageContent {
     const token = this.tokens[this.currentIndex];
     this.currentIndex++;
     const match = token.value.match(/!\[([^\]]*)\]\(([^)]+)\)/);
@@ -158,6 +201,13 @@ export class Parser {
         alt: match ? match[1] : "",
         src: match ? match[2] : "",
       },
+    };
+  }
+
+  private parseLineBreak(): ASTNode {
+    this.currentIndex++;
+    return {
+      type: "LineBreak",
     };
   }
 }

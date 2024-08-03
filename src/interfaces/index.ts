@@ -3,23 +3,96 @@
    by the lexer
 */
 
-interface Token {
-  type: string;
-  value: string;
-}
+// interface Token {
+//   type: string;
+//   value: string;
+// }
 
-interface ASTNode {
+// interface ASTNode {
+//   type: string;
+//   content?: string;
+//   children?: ASTNode[];
+// }
+
+// interface Content {
+//   [key: string]: string;
+// }
+
+// interface ParseNode {
+//   content: Content | string;
+//   type: string;
+// }
+// export type { Token, ASTNode, ParseNode };
+
+export interface ASTNode {
   type: string;
-  content?: string;
+  content?: string | { [key: string]: any };
   children?: ASTNode[];
 }
 
-interface Content {
-  [key: string]: string;
+export interface ASTNodeWithContent extends ASTNode {
+  content: string;
 }
 
-interface ParseNode {
-  content: Content | string;
-  type: string;
+export interface ASTNodeWithLinkContent extends ASTNode {
+  content: {
+    text: string;
+    url: string;
+  };
 }
-export type { Token, ASTNode, ParseNode };
+
+export interface ASTNodeWithImageContent extends ASTNode {
+  content: {
+    alt: string;
+    src: string;
+  };
+}
+
+export interface ASTNodeWithChildren extends ASTNode {
+  children: ASTNode[];
+}
+
+export interface HeaderNode extends ASTNodeWithContent {
+  type: "Header";
+}
+
+export interface ParagraphNode extends ASTNodeWithContent {
+  type: "Paragraph";
+}
+
+export interface OrderedListNode extends ASTNodeWithChildren {
+  type: "OrderedList";
+}
+
+export interface UnorderedListNode extends ASTNodeWithChildren {
+  type: "UnorderedList";
+}
+
+export interface BlockquoteNode extends ASTNodeWithContent {
+  type: "Blockquote";
+}
+
+export interface TableNode extends ASTNodeWithContent {
+  type: "Table";
+}
+
+export interface InlineMathNode extends ASTNodeWithContent {
+  type: "InlineMath";
+}
+
+export interface BlockMathNode extends ASTNodeWithContent {
+  type: "BlockMath";
+}
+
+export interface LinkNode extends ASTNodeWithLinkContent {
+  type: "Link";
+}
+
+export interface ImageNode extends ASTNodeWithImageContent {
+  type: "Image";
+}
+
+export interface Token {
+  type: string;
+  value: string;
+}

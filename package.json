@@ -2,8 +2,8 @@
   "name": "latex_lexer",
   "module": "index.ts",
   "type": "module",
-  "script": {
-    "test": "",
+  "scripts": {
+    "dev": "bun run ./src/index.ts ",
     "build": ""
   },
   "devDependencies": {
